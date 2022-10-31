@@ -1,8 +1,10 @@
 SOURCE_FILE := os-release.pre
-.PHONY: amiya doctor
+PREFIX := /usr/local
+OS_SELECT := null
+#.PHONY: 
 
-amiya: 
-	sed -e 's/%EDITION_NAME%/Amiya/g' -e 's/%EDITION_NAME_SMALL%/amiya/g' $(SOURCE_FILE) >> os-release
+os-release: $(SOURCE_FILE) 
+	sed -e 's/%EDITION_NAME%/$(OS_NAME)/g' -e 's/%EDITION_NAME_SMALL%/$(guile (string-downcase "$(OS_NAME)"))/g' $< >> $@
 
-doctor:
-	sed -e 's/%EDITION_NAME%/doctor/g' -e 's/%EDITION_NAME_SMALL%/doctor/g' $(SOURCE_FILE) >> os-release
+install: os-release
+	install -Dm644 $< $(PREFIX)/lib/$<
