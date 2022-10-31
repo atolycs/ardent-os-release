@@ -1,5 +1,5 @@
+PREFIX := /usr
 SOURCE_FILE := os-release.pre
-PREFIX := /usr/local
 OS_SELECT := null
 .PHONY: install
 
