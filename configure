@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+script_name="$0"
+INCLUDE_MAKEFILE="Makefile.in"
+OUTPUT_MAKEFILE="Makefile"
+
+__help(){
+  printf '
+    %s
+    --os-name=<edition_name> : OS Edition Name
+    --help                   : Print This Message
+  ' ${script_name}
+}
+
+
+__cmd=$@
+
+
+while (( $# > 0 ))
+do
+  case $1 in
+      --os-name=*)
+        if [[ "$1" =~ ^--os-name= ]];then
+           OS_NAME=$(echo $1 | sed -e 's/^--os-name=//')
+        else
+           OS_NAME="$2"
+          shift
+        fi
+        ;;
+      *) __help;;
+    esac
+    shift
+done
+
+
+echo 'Building Makefile...'
+sed -e "s/@OS-NAME@/${OS_NAME}/g" $INCLUDE_MAKEFILE > ${OUTPUT_MAKEFILE}

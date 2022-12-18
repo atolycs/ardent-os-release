@@ -1,10 +1,12 @@
 PREFIX := /usr/local
 SOURCE_FILE := os-release.pre
-OS_SELECT := null
-.PHONY: install uninstall
+OS_NAME := @OS-NAME@
 
+.PHONY: install check
 os-release: $(SOURCE_FILE) 
 	sed -e 's/%EDITION_NAME%/$(OS_NAME)/g' -e 's/%EDITION_NAME_SMALL%/$(guile (string-downcase "$(OS_NAME)"))/g' $< >> $@
+
+check: os-release
 
 install: os-release
 	install -vdm755 $(DESTDIR)$(PREFIX)/lib/
