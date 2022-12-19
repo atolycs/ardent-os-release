@@ -5,16 +5,18 @@ INCLUDE_MAKEFILE="Makefile.in"
 OUTPUT_MAKEFILE="Makefile"
 
 __help(){
-  printf '
-    %s
+  echo "${script_name}"
+  echo '  
     --os-name=<edition_name> : OS Edition Name
+    --prefix=<PREFIX>        : To install Folder
     --help                   : Print This Message
-  ' ${script_name}
+  '
+  exit 130
 }
-
 
 __cmd=$@
 
+# Setup
 
 while (( $# > 0 ))
 do
@@ -22,16 +24,34 @@ do
       --os-name=*)
         if [[ "$1" =~ ^--os-name= ]];then
            OS_NAME=$(echo $1 | sed -e 's/^--os-name=//')
+        elif [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]];then
+           OS_NAME="null"
         else
            OS_NAME="$2"
           shift
         fi
         ;;
-      *) __help;;
+      --prefix=*)
+        if [[ "$1" =~ ^--prefix= ]];then
+           PREFIX=$(echo $1 | sed -e 's/^--prefix=//')
+        elif [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]];then
+           PREFIX="/usr/local"
+        else
+           PREFIX="$2"
+          shift
+        fi
+        ;;
+       *) __help;;
     esac
     shift
 done
 
-
+main() {
 echo 'Building Makefile...'
-sed -e "s/@OS-NAME@/${OS_NAME}/g" $INCLUDE_MAKEFILE > ${OUTPUT_MAKEFILE}
+sed -e "s#@OS-NAME@#${OS_NAME}#g" \
+    -e "s#@PREFIX@#${PREFIX}#g" $INCLUDE_MAKEFILE > ${OUTPUT_MAKEFILE}
+}
+
+[[ ! -z "${OS_NAME}" ]] && [[ ! -z "${PREFIX}" ]] && main || __help
+
+
